@@ -23,5 +23,6 @@ def createApp() :
 
   return app
 
+app = createApp()
 if __name__ == "__main__":
-  createApp().run(debug=True)
+  app.run(debug=True)
