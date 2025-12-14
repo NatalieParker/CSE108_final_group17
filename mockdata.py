@@ -17,9 +17,14 @@ def seed_database():
     with open(CSV_PATH, newline="", encoding="utf-8") as csvfile:
       reader = csv.DictReader(csvfile)
 
+      showCount = 0
+      maxShows = 100
       for row in reader:
         if row["type"] != "TV Show":
           continue
+
+        if showCount >= maxShows:
+          break
 
         show = Show(
           title=row["title"],
@@ -34,6 +39,7 @@ def seed_database():
 
         db.session.add(show)
         shows.append(show)
+        showCount += 1
 
     db.session.commit()
     print(f"Imported {len(shows)} TV shows")
