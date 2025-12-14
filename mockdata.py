@@ -1,10 +1,11 @@
+# ONLY RUN ONCE IF NEEDED, CREATES DATA FOR DATABASE
+
 import csv
 import random
 from app import app
 from data_structure import db, Show, Episode, User, Watched, Review
 
 CSV_PATH = "netflix_titles.csv"
-
 
 def seed_database():
   with app.app_context():

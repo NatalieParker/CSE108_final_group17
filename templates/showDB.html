@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block body %}
+  <h1>Database Debug Page</h1>
+
+  <section>
+      <h2>Shows</h2>
+      <table id="shows-table">
+          <thead>
+              <tr>
+                  <th>ID</th>
+                  <th>Title</th>
+                  <th>Year</th>
+                  <th>Rating</th>
+                  <th>Seasons</th>
+                  <th>Genres</th>
+              </tr>
+          </thead>
+          <tbody></tbody>
+      </table>
+  </section>
+
+  <section>
+      <h2>Episodes</h2>
+      <table id="episodes-table">
+          <thead>
+              <tr>
+                  <th>ID</th>
+                  <th>Show ID</th>
+                  <th>Episode #</th>
+              </tr>
+          </thead>
+          <tbody></tbody>
+      </table>
+  </section>
+
+  <section>
+      <h2>Users</h2>
+      <table id="users-table">
+          <thead>
+              <tr>
+                  <th>ID</th>
+                  <th>Username</th>
+              </tr>
+          </thead>
+          <tbody></tbody>
+      </table>
+  </section>
+
+  <section>
+      <h2>Watch Log</h2>
+      <table id="watched-table">
+          <thead>
+              <tr>
+                  <th>User ID</th>
+                  <th>Episode ID</th>
+              </tr>
+          </thead>
+          <tbody></tbody>
+      </table>
+  </section>
+
+  <section>
+      <h2>Reviews</h2>
+      <table id="reviews-table">
+          <thead>
+              <tr>
+                  <th>User ID</th>
+                  <th>Show ID</th>
+                  <th>Rating</th>
+                  <th>Text</th>
+              </tr>
+          </thead>
+          <tbody></tbody>
+      </table>
+  </section>
+
+  <script src="../static/showDB.js"></script>
+{% endblock %}
