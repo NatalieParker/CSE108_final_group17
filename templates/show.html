@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}CSE 108 Final: {{ show.title }}{% endblock %}
+
+{% block body %}
+
+  <h1>{{ show.title }}</h1>
+
+  <section>
+    <p><strong>Director:</strong> {{ show.director or "N/A" }}</p>
+    <p><strong>Cast:</strong> {{ show.cast or "N/A" }}</p>
+    <p><strong>Release Year:</strong> {{ show.release_year or "N/A" }}</p>
+    <p><strong>Rating:</strong> {{ show.rating or "N/A" }}</p>
+    <p><strong>Seasons:</strong> {{ show.seasons or "N/A" }}</p>
+    <p><strong>Genres:</strong> {{ show.genres or "N/A" }}</p>
+    <p><strong>Description:</strong></p>
+    <p>{{ show.description or "No description available." }}</p>
+  </section>
+
+  <hr>
+
+  <section>
+    <h2>Episodes</h2>
+
+    {% if episodes %}
+      <ul>
+        {% for ep in episodes %}
+          <li>Episode {{ ep.episode_number }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No episodes available.</p>
+    {% endif %}
+  </section>
+
+  <hr>
+
+  <section>
+    <h2>Reviews</h2>
+
+    {% if reviews %}
+      {% for review, username, rating, text in reviews %}
+        <div class="review">
+          <p>
+            <strong>{{ username }}</strong>
+            rated it <strong>{{ rating }}/5</strong>
+          </p>
+          <p>{{ text }}</p>
+        </div>
+        <hr>
+      {% endfor %}
+    {% else %}
+      <p>No reviews yet.</p>
+    {% endif %}
+  </section>
+
+{% endblock %}

@@ -1,5 +1,30 @@
 {% extends "base.html" %}
-{% block title %}Dashboard{% endblock %}
+{% block title %}CSE 108 Final: Dashboard{% endblock %}
 {% block body %}
   <h1>Dashboard</h1>
+
+  <table class="show-table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Release Year</th>
+        <th>Rating</th>
+        <th>Seasons</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for show in shows %}
+      <tr>
+        <td>
+          <a href="{{ url_for('show_detail', show_id=show.id) }}">
+            {{ show.title }}
+          </a>
+        </td>
+        <td>{{ show.release_year or "—" }}</td>
+        <td>{{ show.rating or "—" }}</td>
+        <td>{{ show.seasons or "—" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 {% endblock %}

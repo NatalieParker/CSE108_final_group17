@@ -14,11 +14,33 @@ def createApp() :
 
   @app.route("/")
   def index():
-    return render_template("index.html")
+    shows = Show.query.order_by(Show.title).all()
+    return render_template("index.html", shows=shows)
   
   @app.route("/show-db")
   def show_db():
     return render_template("showDB.html")
+  
+  @app.route("/show/<int:show_id>")
+  def show_detail(show_id):
+    show = Show.query.get_or_404(show_id)
+
+    episodes = Episode.query.filter_by(show_id=show.id).order_by(Episode.episode_number).all()
+
+    reviews = (
+      Review.query
+      .join(User, Review.user_id == User.id)
+      .filter(Review.show_id == show.id)
+      .add_columns(User.username, Review.rating, Review.review_text)
+      .all()
+    )
+
+    return render_template(
+      "show.html",
+      show=show,
+      episodes=episodes,
+      reviews=reviews
+    )
 
 
   @app.route("/api/debug/db")
