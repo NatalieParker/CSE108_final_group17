@@ -9,6 +9,8 @@ login_manager = LoginManager()
 login_manager.login_view = "auth.login"
 
 class User(db.Model, UserMixin):
+    __tablename__ = "users"
+
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String, unique = True, nullable = False)
     password = db.Column(db.String, nullable = False)
@@ -20,25 +22,31 @@ class User(db.Model, UserMixin):
     def check_password(self, password):
         return self.password == password
     
-    def __repr(self):
+    def __repr__(self):
         return '<User %r>' % self.id
 
 class Show(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.Text)
-    release_year = db.Column(db.Integer)
+    __tablename__ = "shows"
 
-    reviews = db.relationship("Review", backref="show")
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+    director = db.Column(db.String(255))
+    cast = db.Column(db.Text)
+    release_year = db.Column(db.Integer)
+    rating = db.Column(db.String(20))
+    seasons = db.Column(db.String(20))
+    genres = db.Column(db.String(255))
+    description = db.Column(db.Text)
 
     def __repr__(self):
-      return f"<Show {self.title}>"
+        return f"<Show {self.title}>"
     
 class Episode(db.Model):
+  __tablename__ = "episodes"
+
   id = db.Column(db.Integer, primary_key=True)
-  show_id = db.Column(db.Integer, db.ForeignKey("show.id"), nullable=False)
+  show_id = db.Column(db.Integer, db.ForeignKey("shows.id"), nullable=False)
   episode_number = db.Column(db.Integer, nullable=False)
-  title = db.Column(db.String(100))
 
   show = db.relationship("Show", backref="episodes")
   watched = db.relationship("Watched", backref="episode")
@@ -48,8 +56,8 @@ class Episode(db.Model):
   
 class Watched(db.Model):
   id = db.Column(db.Integer, primary_key=True)
-  user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-  episode_id = db.Column(db.Integer, db.ForeignKey("episode.id"), nullable=False)
+  user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+  episode_id = db.Column(db.Integer, db.ForeignKey("episodes.id"), nullable=False)
   watched = db.Column(db.Boolean, default=True)
 
   __table_args__ = (
@@ -62,8 +70,8 @@ class Watched(db.Model):
   
 class Review(db.Model):
   id = db.Column(db.Integer, primary_key=True)
-  user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-  show_id = db.Column(db.Integer, db.ForeignKey("show.id"), nullable=False)
+  user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+  show_id = db.Column(db.Integer, db.ForeignKey("shows.id"), nullable=False)
   rating = db.Column(db.Integer)  # 1–5
   review_text = db.Column(db.Text)
 

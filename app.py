@@ -1,6 +1,5 @@
 from flask import Flask, render_template
 from data_structure import db, login_manager
-from mockdata import mockData
 
 def createApp() :
   app = Flask(__name__)
@@ -19,7 +18,6 @@ def createApp() :
 
   with app.app_context():
     db.create_all()
-    mockData()
 
   return app
 

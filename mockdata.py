@@ -1,99 +1,107 @@
+import csv
+import random
+from app import app
+from data_structure import db, Show, Episode, User, Watched, Review
 
-from data_structure import db, User, Show, Episode, Watched, Review
+CSV_PATH = "netflix_titles.csv"
 
 
-def mockData():
-    if User.query.first(): return
-    
-    u1 = User(username="alice", password="123456")
-    u2 = User(username="bob", password="123456")
-    u3 = User(username="tanya", password="123456")
-    u4 = User(username="lily", password="123456")
-    admin = User(username="admin", password="admin123", is_admin=True)
+def seed_database():
+  with app.app_context():
+    db.drop_all()
+    db.create_all()
 
-    db.session.add_all([u1, u2, u3, u4, admin])
+    shows = []
+
+    with open(CSV_PATH, newline="", encoding="utf-8") as csvfile:
+      reader = csv.DictReader(csvfile)
+
+      for row in reader:
+        if row["type"] != "TV Show":
+          continue
+
+        show = Show(
+          title=row["title"],
+          director=row["director"] or None,
+          cast=row["cast"] or None,
+          release_year=int(row["release_year"]) if row["release_year"] else None,
+          rating=row["rating"] or None,
+          seasons=row["duration"] or None,
+          genres=row["listed_in"] or None,
+          description=row["description"] or None
+        )
+
+        db.session.add(show)
+        shows.append(show)
+
     db.session.commit()
+    print(f"Imported {len(shows)} TV shows")
 
-    s1 = Show(
-        title="Breaking Bad",
-        description="A chemistry teacher turns to crime.",
-        release_year=2008
-    )
+    episodes = []
 
-    s2 = Show(
-        title="Stranger Things",
-        description="Supernatural events in a small town.",
-        release_year=2016
-    )
+    for show in shows:
+        for i in range(1, 11):
+            ep = Episode(
+                show_id=show.id,
+                episode_number=i
+            )
+            db.session.add(ep)
+            episodes.append(ep)
 
-    s3 = Show(
-        title="The Office",
-        description="A mockumentary about office life.",
-        release_year=2005
-    )
-
-    db.session.add_all([s1, s2, s3])
     db.session.commit()
+    print(f"Created {len(episodes)} episodes")
 
-    e1 = Episode(show_id=s1.id, episode_number=1, title="Pilot")
-    e2 = Episode(show_id=s1.id, episode_number=2, title="Cat's in the Bag...")
+    users = []
 
-    e3 = Episode(show_id=s2.id, episode_number=1, title="The Vanishing of Will Byers")
-    e4 = Episode(show_id=s2.id, episode_number=2, title="The Weirdo on Maple Street")
+    usernames = ["alice", "bob", "charlie", "diana"]
 
-    e5 = Episode(show_id=s3.id, episode_number=1, title="Pilot")
-    e6 = Episode(show_id=s3.id, episode_number=2, title="Diversity Day")
+    for name in usernames:
+      user = User(
+        username=name,
+        password="password"
+      )
+      db.session.add(user)
+      users.append(user)
 
-    e7 = Episode(show_id=s1.id, episode_number=3, title="...And the Bag's in the River")
-    e8 = Episode(show_id=s1.id, episode_number=4, title="Cancer Man")
-
-    e9 = Episode(show_id=s2.id, episode_number=3, title="Holly, Jolly")
-    e10 = Episode(show_id=s2.id, episode_number=4, title="The Body")
-
-    e11 = Episode(show_id=s3.id, episode_number=3, title="Health Care")
-    e12 = Episode(show_id=s3.id, episode_number=4, title="The Alliance")
-
-    db.session.add_all([e1, e2, e3, e4, e5, e6, e7, e8, e9, e10, e11, e12])
     db.session.commit()
+    print(f"Created {len(users)} users")
 
-    w1 = Watched(user_id=u1.id, episode_id=e1.id)
-    w2 = Watched(user_id=u1.id, episode_id=e2.id)
-    w3 = Watched(user_id=u2.id, episode_id=e1.id)
+    watched_entries = 0
 
-    w4 = Watched(user_id=u3.id, episode_id=e3.id)
-    w5 = Watched(user_id=u3.id, episode_id=e4.id)
-    w6 = Watched(user_id=u3.id, episode_id=e5.id)
+    for user in users:
+      watched_eps = random.sample(episodes, 15)
 
-    db.session.add_all([w1, w2, w3, w4, w5, w6])
+      for ep in watched_eps:
+        watch = Watched(
+          user_id=user.id,
+          episode_id=ep.id
+        )
+        db.session.add(watch)
+        watched_entries += 1
+
     db.session.commit()
+    print(f"Created {watched_entries} watch log entries")
 
-    r1 = Review(
-        user_id=u1.id,
-        show_id=s1.id,
-        rating=5,
-        review_text="One of the best TV shows ever made."
-    )
+    review_count = 0
 
-    r2 = Review(
-        user_id=u2.id,
-        show_id=s2.id,
-        rating=4,
-        review_text="Very engaging, especially the first season."
-    )
+    reviewed_shows = random.sample(shows, 10)
 
-    r3 = Review(
-        user_id=u3.id,
-        show_id=s3.id,
-        rating=5,
-        review_text="Hilarious and endlessly rewatchable."
-    )
+    for show in reviewed_shows:
+      reviewer = random.choice(users)
+      review = Review(
+        user_id=reviewer.id,
+        show_id=show.id,
+        rating=random.randint(1, 5),
+        review_text="Really enjoyed this show!"
+      )
+      db.session.add(review)
+      review_count += 1
 
-    r4 = Review(
-        user_id=u3.id,
-        show_id=s2.id,
-        rating=5,
-        review_text="A great show to watch with the family."
-    )
-
-    db.session.add_all([r1, r2, r3, r4])
     db.session.commit()
+    print(f"Created {review_count} reviews")
+
+    print("Database seeding complete!")
+
+
+if __name__ == "__main__":
+  seed_database()
