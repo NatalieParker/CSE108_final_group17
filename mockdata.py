@@ -125,7 +125,7 @@ def add_cover_images():
 
     # All TV show cover images
     cover_images = {
-      "Angry Birds": "https://m.media-amazon.com/images/M/MV5BMTY3MjU0NDA0OF5BMl5BanBnXkFtZTgwNTc0MTU3OTE@._V1_FMjpg_UX1000_.jpg",
+      "Angry Birds": "https://m.media-amazon.com/images/M/MV5BZmY3YTU3YTgtMDY1OC00ZTlhLWE0MjUtNDYwZmE0NjJiNjFiXkEyXkFqcGc@._V1_.jpg",
       "Bangkok Breaking": "https://m.media-amazon.com/images/M/MV5BZjdkODlhMTgtNGEzNi00YjdiLTk4ZjEtNjc4MjdkYTllYTExXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
       "Blood & Water": "https://m.media-amazon.com/images/M/MV5BYjUxN2E2MWYtYTFiNi00YmJiLTkzOGMtNGRhYmI3ZGM4ZmQ0XkEyXkFqcGc@._V1_.jpg",
       "Brand New Cherry Flavor": "https://m.media-amazon.com/images/M/MV5BNDZjNTJmMmEtZjYwOS00MTYzLTgwYTYtYWJiMDkxNDMzMDAyXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
