@@ -23,8 +23,8 @@ def login():
                 login_user(user, remember=remember)
 
                 # 🔹 NEW: admins go straight to Flask-Admin dashboard
-                # if getattr(user, "is_admin", False):
-                #     return redirect(url_for("admin.index"))
+                if getattr(user, "is_admin", False):
+                    return redirect(url_for("admin.index"))
 
                 # students/teachers go to normal dashboard
                 return redirect(url_for("index"))

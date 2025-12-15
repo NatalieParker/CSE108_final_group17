@@ -1,12 +1,18 @@
-from flask import Flask, render_template, jsonify
+import os
+from flask import Flask, render_template, jsonify, redirect, url_for, flash
+from flask_login import current_user, login_required
+from flask_admin import Admin, AdminIndexView
+from flask_admin.contrib.sqla import ModelView
 from data_structure import db, login_manager, Show, Episode, User, Watched, Review
 from routes import auth_bp
+
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 def createApp() :
   app = Flask(__name__)
   app.config.update(
     SECRET_KEY="dev",
-    SQLALCHEMY_DATABASE_URI="sqlite:///cse108webtv.db",
+    SQLALCHEMY_DATABASE_URI=f"sqlite:///{os.path.join(BASE_DIR, 'instance/cse108webtv.db')}",
     SQLALCHEMY_TRACK_MODIFICATIONS=False,
   )
 
@@ -14,11 +20,41 @@ def createApp() :
   login_manager.init_app(app)
   app.register_blueprint(auth_bp)
 
+    # ------------- PROTECT ADMIN WITH LOGIN + is_admin -------------
+  class SecureAdminIndexView(AdminIndexView):
+    def is_accessible(self):
+      return current_user.is_authenticated and getattr(current_user, "is_admin", False)
+
+    def inaccessible_callback(self, name, **kwargs):
+      return redirect(url_for("auth.login"))
+
+  class SecureModelView(ModelView):
+    def is_accessible(self):
+      return current_user.is_authenticated and getattr(current_user, "is_admin", False)
+
+    def inaccessible_callback(self, name, **kwargs):
+      return redirect(url_for("auth.login"))
+
+  # ------------- FLASK-ADMIN SETUP -------------
+  admin = Admin(
+    app,
+    name="Admin",
+    index_view=SecureAdminIndexView(url="/admin")
+  )
+
+  # Expose your models in the admin UI
+  admin.add_view(SecureModelView(User, db.session))
+  admin.add_view(SecureModelView(Show, db.session))
+  admin.add_view(SecureModelView(Episode, db.session))
+  admin.add_view(SecureModelView(Watched, db.session))
+  admin.add_view(SecureModelView(Review, db.session))
+
   @app.route("/")
   def home():
     return render_template("login.html")
 
   @app.route("/index")
+  @login_required
   def index():
     shows = Show.query.order_by(Show.title).all()
     return render_template("index.html", shows=shows)
@@ -28,6 +64,7 @@ def createApp() :
     return render_template("showDB.html")
   
   @app.route("/show/<int:show_id>")
+  @login_required
   def show_detail(show_id):
     show = Show.query.get_or_404(show_id)
 
