@@ -3,6 +3,8 @@ import os
 from flask import Flask, render_template, request, redirect, url_for
 from flask_login import LoginManager, UserMixin
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -18,9 +20,15 @@ class User(db.Model, UserMixin):
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
                          
     def set_password(self, password):
-        self.password = password
+        self.password = generate_password_hash(password)
     def check_password(self, password):
-        return self.password == password
+        if self.password and not self.password.startswith(("pbkdf2:", "scrypt:", "argon2:")):
+            if self.password == password:
+                self.set_password(password)
+                db.session.commit()
+                return True
+            return False
+        return check_password_hash(self.password, password)
     
     def __repr__(self):
         return '<User %r>' % self.id
@@ -86,3 +94,26 @@ class Review(db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+class WatchStatus(db.Model):
+    __tablename__ = "watch_status"
+
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), primary_key=True)
+    show_id = db.Column(db.Integer, db.ForeignKey("shows.id"), primary_key=True)
+    status = db.Column(db.String(20), nullable=False)
+
+class List(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    title = db.Column(db.String(100))
+    is_public = db.Column(db.Boolean, default=True)
+
+class ListItem(db.Model):
+    list_id = db.Column(db.Integer, db.ForeignKey("list.id"), primary_key=True)
+    show_id = db.Column(db.Integer, db.ForeignKey("shows.id"), primary_key=True)
+    position = db.Column(db.Integer)
+
+__table_args__ = (
+    db.UniqueConstraint("user_id", "show_id", name="unique_user_review"),
+)
+

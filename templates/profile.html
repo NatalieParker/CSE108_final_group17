@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block body %}
+<h1>{{ user.username }}</h1>
+
+<h2>Reviews</h2>
+{% for r, title, rating in reviews %}
+  <p>{{ title }} — {{ rating }}/5</p>
+{% endfor %}
+{% endblock %}
+

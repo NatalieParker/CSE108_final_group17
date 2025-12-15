@@ -5,3 +5,315 @@
 .episode-item.watched {
   color: #999;
 }
+
+#episodeList {
+  list-style: none;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+#episodeList .episode-item {
+  margin: 6px 0;
+}
+
+/* ---------- Theme ---------- */
+:root{
+  --bg: #0b1020;
+  --panel: rgba(255,255,255,0.06);
+  --panel2: rgba(255,255,255,0.10);
+  --text: rgba(255,255,255,0.92);
+  --muted: rgba(255,255,255,0.70);
+  --line: rgba(255,255,255,0.12);
+  --accent: #7c5cff;
+  --accent2: #2de2a7;
+  --danger: #ff5470;
+  --shadow: 0 12px 40px rgba(0,0,0,0.45);
+  --radius: 16px;
+}
+
+/* Light theme */
+html[data-theme="light"]{
+  --bg: #f6f7fb;
+  --panel: rgba(0,0,0,0.04);
+  --panel2: rgba(0,0,0,0.06);
+  --text: rgba(10,14,25,0.92);
+  --muted: rgba(10,14,25,0.68);
+  --line: rgba(10,14,25,0.12);
+  --shadow: 0 12px 40px rgba(10,14,25,0.10);
+}
+html[data-theme="light"] body{
+  background:
+    radial-gradient(1200px 600px at 15% 0%, rgba(124,92,255,0.20), transparent 55%),
+    radial-gradient(1000px 500px at 85% 10%, rgba(45,226,167,0.14), transparent 55%),
+    linear-gradient(180deg, #ffffff, var(--bg));
+}
+
+
+*{ box-sizing: border-box; }
+html, body{ height: 100%; }
+body{
+  margin: 0;
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  background:
+    radial-gradient(1200px 600px at 15% 0%, rgba(124,92,255,0.25), transparent 55%),
+    radial-gradient(1000px 500px at 85% 10%, rgba(45,226,167,0.18), transparent 55%),
+    linear-gradient(180deg, #070a14, var(--bg));
+}
+
+a{ color: inherit; }
+a:hover{ color: white; }
+
+.container{
+  width: min(1100px, 92vw);
+  margin: 0 auto;
+  padding: 24px 0 64px;
+}
+
+/* ---------- Top bar / Nav ---------- */
+.topbar{
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  backdrop-filter: blur(14px);
+  background: rgba(7,10,20,0.6);
+  border-bottom: 1px solid var(--line);
+}
+
+.topbar-inner{
+  width: min(1100px, 92vw);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  gap: 16px;
+}
+
+.brand{
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  text-decoration: none;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.brand-dot{
+  width: 10px; height: 10px; border-radius: 999px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  box-shadow: 0 0 0 4px rgba(124,92,255,0.16);
+}
+
+.navlinks{
+  display:flex; gap: 10px; align-items:center; flex-wrap:wrap;
+}
+.navlinks a{
+  text-decoration:none;
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: var(--muted);
+  border: 1px solid transparent;
+}
+.navlinks a:hover{
+  color: white;
+  border-color: var(--line);
+  background: rgba(255,255,255,0.06);
+}
+
+/* ---------- Cards / grids ---------- */
+.grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.card{
+  background: linear-gradient(180deg, var(--panel), rgba(255,255,255,0.03));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow:hidden;
+}
+
+.card:hover{
+  border-color: rgba(124,92,255,0.45);
+  transform: translateY(-2px);
+  transition: 120ms ease;
+}
+
+.card-body{ padding: 12px 12px 14px; }
+.card-title{
+  font-weight: 700;
+  margin: 8px 0 4px;
+  font-size: 0.98rem;
+}
+.card-meta{
+  color: var(--muted);
+  font-size: 0.88rem;
+  display:flex;
+  gap: 8px;
+  flex-wrap:wrap;
+}
+
+.cover{
+  width:100%;
+  aspect-ratio: 2/3;
+  object-fit: cover;
+  display:block;
+  background: rgba(255,255,255,0.06);
+}
+
+/* ---------- Show page layout ---------- */
+.hero{
+  display:grid;
+  grid-template-columns: 220px 1fr;
+  gap: 20px;
+  align-items:start;
+}
+
+.panel{
+  background: linear-gradient(180deg, var(--panel2), rgba(255,255,255,0.05));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow);
+}
+
+h1{ margin: 12px 0 8px; font-size: clamp(1.6rem, 2.4vw, 2.4rem); }
+h2{ margin: 0 0 12px; font-size: 1.15rem; }
+hr{
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 18px 0;
+}
+
+/* ---------- Forms ---------- */
+label{ color: var(--muted); font-weight: 600; }
+input, textarea, select{
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(0,0,0,0.25);
+  color: var(--text);
+  outline: none;
+}
+textarea{ resize: vertical; }
+input:focus, textarea:focus, select:focus{
+  border-color: rgba(124,92,255,0.65);
+  box-shadow: 0 0 0 4px rgba(124,92,255,0.15);
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(124,92,255,0.5);
+  background: linear-gradient(135deg, rgba(124,92,255,0.85), rgba(45,226,167,0.35));
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn:hover{ filter: brightness(1.05); }
+.btn-secondary{
+  border-color: var(--line);
+  background: rgba(255,255,255,0.06);
+  color: var(--text);
+}
+.btn-secondary:hover{ background: rgba(255,255,255,0.09); }
+
+/* ---------- Episodes checklist ---------- */
+#episodeList{
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 10px;
+}
+
+.episode-item{
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,0.05);
+}
+.episode-item label{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  cursor:pointer;
+  color: var(--text);
+  font-weight: 600;
+}
+.episode-item .episode-checkbox{
+  width: 18px; height: 18px;
+}
+.episode-item.watched{
+  border-color: rgba(45,226,167,0.50);
+  background: rgba(45,226,167,0.10);
+  opacity: 0.95;
+}
+
+/* ---------- Reviews ---------- */
+.review{
+  padding: 12px 0;
+}
+.review p{ margin: 6px 0; }
+.review .meta{
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+/* ---------- Flash messages ---------- */
+.flash{
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin: 14px 0;
+  background: rgba(255,255,255,0.06);
+}
+.flash.success{ border-color: rgba(45,226,167,0.55); }
+.flash.error{ border-color: rgba(255,84,112,0.55); }
+.flash.info{ border-color: rgba(124,92,255,0.55); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 760px){
+  .hero{ grid-template-columns: 1fr; }
+}
+
+/* ---------- Checkboxes (login)e ---------- */
+
+input[type="checkbox"]{
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: rgba(0,0,0,0.25);
+  display: inline-grid;
+  place-content: center;
+  cursor: pointer;
+}
+
+input[type="checkbox"]::before{
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  transform: scale(0);
+  transition: transform 120ms ease;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+}
+
+input[type="checkbox"]:checked::before{
+  transform: scale(1);
+}
+
