@@ -103,6 +103,37 @@ def createApp() :
       reviews=reviews,
       maxWatchedEpisode=maxWatchedEpisode
     )
+  
+  @app.route("/show/<int:show_id>/review", methods=["POST"])
+  @login_required
+  def add_review(show_id):
+    show = Show.query.get_or_404(show_id)
+  
+    rating = request.form.get("rating", type=int)
+    review_text = (request.form.get("review_text") or "").strip()
+  
+    if rating is None or rating < 1 or rating > 5:
+      flash("Rating must be between 1 and 5.", "error")
+      return redirect(url_for("show_detail", show_id=show.id))
+  
+    existing = Review.query.filter_by(user_id=current_user.id, show_id=show.id).first()
+  
+    if existing:
+      existing.rating = rating
+      existing.review_text = review_text
+    else:
+      r = Review(
+        user_id=current_user.id,
+        show_id=show.id,
+        rating=rating,
+        review_text=review_text
+      )
+      db.session.add(r)
+  
+    db.session.commit()
+    flash("Review saved!", "success")
+    return redirect(url_for("show_detail", show_id=show.id))
+
 
 
   @app.route("/api/debug/db")

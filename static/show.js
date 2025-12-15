@@ -2,45 +2,85 @@ function setupEpisodeClicks() {
   const episodeList = document.getElementById("episodeList")
   if (!episodeList) return
 
-  const showId = episodeList.dataset.showId
-  const maxWatched = parseInt(episodeList.dataset.maxWatched)
-  const episodes = episodeList.querySelectorAll(".episode-item")
+  const showId = Number(episodeList.dataset.showId)
+  let maxWatched = parseInt(episodeList.dataset.maxWatched, 10) || 0
 
-  episodes.forEach(ep => {
-    const num = parseInt(ep.dataset.episodeNumber)
-    if (num <= maxWatched) {
-      ep.classList.add("watched")
-    }
+  const episodeItems = Array.from(episodeList.querySelectorAll(".episode-item"))
+
+  function applyWatchedUI(newMax) {
+    episodeItems.forEach(item => {
+      const num = parseInt(item.dataset.episodeNumber, 10)
+      const cb = item.querySelector(".episode-checkbox")
+      const watched = num <= newMax
+
+      item.classList.toggle("watched", watched)
+      if (cb) cb.checked = watched
+    })
+
+    episodeList.dataset.maxWatched = String(newMax)
+    maxWatched = newMax
+  }
+
+  // Initial paint from server value
+  applyWatchedUI(maxWatched)
+
+  // Map episode_number -> episode_id (for sending correct id)
+  const numToId = new Map()
+  episodeItems.forEach(item => {
+    numToId.set(parseInt(item.dataset.episodeNumber, 10), Number(item.dataset.episodeId))
   })
 
-  episodes.forEach(ep => {
-    ep.addEventListener("click", () => {
-      const episodeId = ep.dataset.episodeId
-      const episodeNumber = parseInt(ep.dataset.episodeNumber)
+  episodeItems.forEach(item => {
+    const cb = item.querySelector(".episode-checkbox")
+    if (!cb) return
 
-      fetch("/watch", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          episode_id: episodeId,
-          show_id: showId
+    cb.addEventListener("change", async () => {
+      const clickedNum = parseInt(item.dataset.episodeNumber, 10)
+      const targetNum = cb.checked ? clickedNum : (clickedNum - 1)
+
+      const newMax = Math.max(0, targetNum)
+
+      // Minimal-change behavior: don’t support clearing to 0 without a backend route
+      if (newMax === 0) {
+        applyWatchedUI(maxWatched) // revert
+        return
+      }
+
+      const episodeId = numToId.get(newMax)
+      if (!episodeId) {
+        applyWatchedUI(maxWatched)
+        return
+      }
+
+      try {
+        const res = await fetch("/watch", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          body: JSON.stringify({ episode_id: episodeId, show_id: showId })
         })
-      })
 
-      episodes.forEach(e => {
-        const num = parseInt(e.dataset.episodeNumber)
-        if (num <= episodeNumber) {
-          e.classList.add("watched")
-        } else {
-          e.classList.remove("watched")
+        if (res.redirected || res.url.includes("/auth/login")) {
+          window.location.href = res.url
+          return
         }
-      })
 
-      episodeList.dataset.maxWatched = episodeNumber
+        if (!res.ok) {
+          applyWatchedUI(maxWatched)
+          alert("Could not update watched progress. Please try again.")
+          return
+        }
+
+        applyWatchedUI(newMax)
+
+      } catch (err) {
+        console.error(err)
+        applyWatchedUI(maxWatched)
+        alert("Network error. Please try again.")
+      }
     })
   })
 }
 
 setupEpisodeClicks()
+

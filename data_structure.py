@@ -3,6 +3,8 @@ import os
 from flask import Flask, render_template, request, redirect, url_for
 from flask_login import LoginManager, UserMixin
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -18,9 +20,15 @@ class User(db.Model, UserMixin):
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
                          
     def set_password(self, password):
-        self.password = password
+        self.password = generate_password_hash(password)
     def check_password(self, password):
-        return self.password == password
+        if self.password and not self.password.startswith(("pbkdf2:", "scrypt:", "argon2:")):
+            if self.password == password:
+                self.set_password(password)
+                db.session.commit()
+                return True
+            return False
+        return check_password_hash(self.password, password)
     
     def __repr__(self):
         return '<User %r>' % self.id
