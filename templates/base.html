@@ -7,6 +7,14 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
   </head>
   <body>
+    {% if current_user.is_authenticated %}
+      <nav class="navbar">
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('account') }}">My Account</a>
+        <a href="{{ url_for('auth.logout') }}">Logout</a>
+      </nav>
+    {% endif %}
+      
     <div class="container">
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}

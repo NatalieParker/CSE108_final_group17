@@ -1,7 +1,14 @@
 {% extends "base.html" %}
 {% block title %}CSE 108 Final: {{ show.title }}{% endblock %}
-
 {% block body %}
+
+  <div style="display: flex; gap: 20px; align-items: flex-start;">
+    <img
+      src="{{ show.cover or url_for('static', filename='covers/default.jpg') }}"
+      alt="{{ show.title }} cover"
+      style="width:200px; height:auto; border-radius:6px;"
+    >
+  </div>
 
   <h1>{{ show.title }}</h1>
 
@@ -24,7 +31,11 @@
     {% if episodes %}
       <ul>
         {% for ep in episodes %}
-          <li>Episode {{ ep.episode_number }}</li>
+          {% if maxWatchedEpisode and ep.episode_number <= maxWatchedEpisode %}
+            <li style="color: #999;">Episode {{ ep.episode_number }}</li>
+          {% else %}
+            <li>Episode {{ ep.episode_number }}</li>
+          {% endif %}
         {% endfor %}
       </ul>
     {% else %}
