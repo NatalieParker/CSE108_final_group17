@@ -8,6 +8,7 @@
   <table class="show-table">
     <thead>
       <tr>
+        <th>Cover</th>
         <th>Title</th>
         <th>Release Year</th>
         <th>Rating</th>
@@ -17,6 +18,11 @@
     <tbody>
       {% for show in shows %}
       <tr>
+        <td>
+          <img src="{{ show.cover or url_for('static', filename='covers/default.jpg') }}"
+            alt="{{ show.title }} cover"
+            style="height:120px; width:auto;"/>
+        </td>
         <td>
           <a href="{{ url_for('show_detail', show_id=show.id) }}">
             {{ show.title }}

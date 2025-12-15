@@ -30,6 +30,7 @@ class Show(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
+    cover = db.Column(db.Text)
     director = db.Column(db.String(255))
     cast = db.Column(db.Text)
     release_year = db.Column(db.Integer)
