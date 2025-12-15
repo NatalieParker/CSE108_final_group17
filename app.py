@@ -69,6 +69,24 @@ def createApp() :
     show = Show.query.get_or_404(show_id)
 
     episodes = Episode.query.filter_by(show_id=show.id).order_by(Episode.episode_number).all()
+    maxWatchedEpisode = None
+
+    if current_user.is_authenticated:
+      watchedRows = (
+        Watched.query
+        .filter_by(user_id=current_user.id)
+        .all()
+      )
+
+      episode_numbers = []
+
+      for w in watchedRows:
+        episode = Episode.query.get(w.episode_id)
+        if episode and episode.show_id == show.id:
+          episode_numbers.append(episode.episode_number)
+
+      if episode_numbers:
+        maxWatchedEpisode = max(episode_numbers)
 
     reviews = (
       Review.query
@@ -82,7 +100,8 @@ def createApp() :
       "show.html",
       show=show,
       episodes=episodes,
-      reviews=reviews
+      reviews=reviews,
+      maxWatchedEpisode=maxWatchedEpisode
     )
 
 
@@ -133,6 +152,41 @@ def createApp() :
         } for r in reviews
       ]
     })
+
+  @app.route("/account")
+  @login_required
+  def account():
+    watch_log = (
+      Watched.query
+      .join(Episode, Watched.episode_id == Episode.id)
+      .join(Show, Episode.show_id == Show.id)
+      .filter(Watched.user_id == current_user.id)
+      .add_columns(
+        Show.title.label("show_title"),
+        Show.cover.label("cover"),
+        Show.id.label("show_id"),
+        Episode.episode_number
+      )
+      .all()
+    )
+
+    reviews = (
+      Review.query
+      .join(Show, Review.show_id == Show.id)
+      .filter(Review.user_id == current_user.id)
+      .add_columns(
+        Show.title.label("show_title"),
+        Review.rating,
+        Review.review_text
+      )
+      .all()
+    )
+
+    return render_template(
+      "account.html",
+      watch_log=watch_log,
+      reviews=reviews
+    )
 
   with app.app_context():
     db.create_all()

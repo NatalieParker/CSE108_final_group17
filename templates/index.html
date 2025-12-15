@@ -1,10 +1,50 @@
 {% extends "base.html" %}
-{% block title %}CSE 108 Final: Dashboard{% endblock %}
+{% block title %}CSE 108 Final: Home{% endblock %}
 {% block body %}
-  <h1>Dashboard</h1>
-  <p>Welcome, {{ current_user.username }}.</p>
-  <p><a href="{{ url_for('auth.logout') }}">Log out</a></p>
+  <h1>Home Page</h1>
 
+  <label for="titleSearch">Search Title:</label>
+  <input
+    type="text"
+    id="titleSearch"
+    placeholder="Search by title"
+    style="height: 1.5rem;"
+  >
+
+  <label for="genreDropdown" style="margin-left: 1rem;">Genre:</label>
+  <select id="genreDropdown" style="height: 1.5rem;">
+    <option value="">All</option>
+    <option value="international tv shows">International TV Shows</option>
+    <option value="tv dramas">TV Dramas</option>
+    <option value="docuseries">Docuseries</option>
+    <option value="reality tv">Reality TV</option>
+    <option value="teen tv shows">Teen TV Shows</option>
+    <option value="anime series">Anime Series</option>
+    <option value="crime tv shows">Crime TV Shows</option>
+    <option value="tv action & adventure">TV Action & Adventure</option>
+    <option value="tv mysteries">TV Mysteries</option>
+    <option value="romantic tv shows">Romantic TV Shows</option>
+    <option value="tv horror">TV Horror</option>
+    <option value="british tv shows">British TV Shows</option>
+    <option value="spanish-language tv shows">Spanish-Language TV Shows</option>
+    <option value="tv thrillers">TV Thrillers</option>
+    <option value="kids' tv">Kids' TV</option>
+    <option value="tv sci-fi & fantasy">TV Sci-Fi & Fantasy</option>
+    <option value="korean tv shows">Korean TV Shows</option>
+    <option value="science & nature tv">Science & Nature TV</option>
+  </select>
+
+  <label for="ratingDropdown" style="margin-left: 1rem;">Rating:</label>
+  <select id="ratingDropdown" style="height: 1.5rem;">
+    <option value="">All</option>
+    <option value="TV-MA">TV-MA</option>
+    <option value="TV-14">TV-14</option>
+    <option value="TV-Y7">TV-Y7</option>
+    <option value="TV-PG">TV-PG</option>
+    <option value="TV-Y">TV-Y</option>
+    <option value="TV-G">TV-G</option>
+  </select>
+  
   <table class="show-table">
     <thead>
       <tr>
@@ -17,7 +57,11 @@
     </thead>
     <tbody>
       {% for show in shows %}
-      <tr>
+      <tr
+        data-title="{{ show.title | lower }}"
+        data-genre="{{ show.genres | lower if show.genres }}"
+        data-rating="{{ show.rating }}"
+      >
         <td>
           <img src="{{ show.cover or url_for('static', filename='covers/default.jpg') }}"
             alt="{{ show.title }} cover"
@@ -35,4 +79,6 @@
       {% endfor %}
     </tbody>
   </table>
+
+  <script src="../static/main.js"></script>
 {% endblock %}

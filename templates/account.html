@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}CSE 108 Final:Account Page{% endblock %}
+{% block body %}
+  <h1>My Account</h1>
+
+  <section>
+    <p><strong>Username:</strong> {{ current_user.username }}</p>
+  </section>
+
+  <section>
+    <h2>Watch Log</h2>
+
+    {% if watch_log %}
+      <table class="show-table">
+        <thead>
+          <tr>
+            <th>Cover</th>
+            <th>Title</th>
+            <th>Episode</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for entry in watch_log %}
+            <tr>
+              <td>
+                <img
+                  src="{{ entry.cover or url_for('static', filename='covers/default.jpg') }}"
+                  alt="{{ entry.show_title }} cover"
+                  style="width:60px; height:auto;">
+              </td>
+              <td>
+                <a href="{{ url_for('show_detail', show_id=entry.show_id) }}">
+                  {{ entry.show_title }}
+                </a>
+              </td>
+              <td>Episode {{ entry.episode_number }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>You haven’t watched any episodes yet.</p>
+    {% endif %}
+  </section>
+
+  <section>
+    <h2>My Reviews</h2>
+
+    {% if reviews %}
+      {% for review in reviews %}
+          <div class="review">
+            <p>
+              <strong>{{ review.show_title }}</strong>
+              — Rated {{ review.rating }}/5
+            </p>
+            <p>{{ review.review_text }}</p>
+          </div>
+        {% endfor %}
+    {% else %}
+      <p>You haven’t written any reviews yet.</p>
+    {% endif %}
+  </section>
+
+  <section>
+    <a href="{{ url_for('auth.logout') }}">
+      <button>Log Out</button>
+    </a>
+  </section>
+
+{% endblock %}
