@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify
 from data_structure import db, login_manager, Show, Episode, User, Watched, Review
+from routes import auth_bp
 
 def createApp() :
   app = Flask(__name__)
@@ -11,8 +12,13 @@ def createApp() :
 
   db.init_app(app)
   login_manager.init_app(app)
+  app.register_blueprint(auth_bp)
 
   @app.route("/")
+  def home():
+    return render_template("login.html")
+
+  @app.route("/index")
   def index():
     shows = Show.query.order_by(Show.title).all()
     return render_template("index.html", shows=shows)
@@ -98,4 +104,4 @@ def createApp() :
 
 app = createApp()
 if __name__ == "__main__":
-  app.run(debug=True)
+  app.run(debug=True, port=5001)
