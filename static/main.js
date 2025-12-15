@@ -1,29 +1,30 @@
-const titleInput = document.getElementById("titleSearch")
-const genreDropdown = document.getElementById("genreDropdown")
-const ratingDropdown = document.getElementById("ratingDropdown")
-const rows = document.querySelectorAll(".show-table tbody tr")
+const titleInput = document.getElementById("titleSearch");
+const genreDropdown = document.getElementById("genreDropdown");
+const ratingDropdown = document.getElementById("ratingDropdown");
+const cards = document.querySelectorAll(".show-card");
 
 function filterShows() {
-  const titleValue = titleInput.value.toLowerCase()
-  const genreValue = genreDropdown.value.toLowerCase()
-  const ratingValue = ratingDropdown.value
+  const titleValue = titleInput.value.toLowerCase();
+  const genreValue = genreDropdown.value.toLowerCase();
+  const ratingValue = ratingDropdown.value;
 
-  rows.forEach(row => {
-    const title = row.dataset.title || ""
-    const genre = row.dataset.genre || ""
-    const rating = row.dataset.rating || ""
+  cards.forEach(card => {
+    const title = card.dataset.title || "";
+    const genre = card.dataset.genre || "";
+    const rating = card.dataset.rating || "";
 
-    const matchesTitle = title.includes(titleValue)
-    const matchesGenre = !genreValue || genre.includes(genreValue)
-    const matchesRating = !ratingValue || rating === ratingValue
+    const matchesTitle = title.includes(titleValue);
+    const matchesGenre = !genreValue || genre.includes(genreValue);
+    const matchesRating = !ratingValue || rating === ratingValue;
 
-    row.style.display =
+    card.style.display =
       matchesTitle && matchesGenre && matchesRating
-        ? ""
-        : "none"
-  })
+        ? "block"
+        : "none";
+  });
 }
 
-titleInput.addEventListener("input", filterShows)
-genreDropdown.addEventListener("change", filterShows)
-ratingDropdown.addEventListener("change", filterShows)
+titleInput.addEventListener("input", filterShows);
+genreDropdown.addEventListener("change", filterShows);
+ratingDropdown.addEventListener("change", filterShows);
+

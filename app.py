@@ -52,6 +52,9 @@ def createApp() :
 
   @app.route("/")
   def home():
+    if current_user.is_authenticated:
+        shows = Show.query.order_by(Show.title).all()
+        return render_template("index.html", shows=shows)
     return render_template("login.html")
 
   @app.route("/index")

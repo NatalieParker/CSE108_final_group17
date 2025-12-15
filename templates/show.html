@@ -74,117 +74,80 @@
   </section>
 
   <hr>
-  <section>
-        <h2>Write a Review</h2>
+
+<section class="panel reviews-section">
+
+  <h2>Reviews</h2>
 
   {% if current_user.is_authenticated %}
-  
-
-    <form method="POST" action="{{ url_for('add_review', show_id=show.id) }}">
-        <label for="episode_numbers"><strong>Select episode(s) (optional)</strong></label><br>
-        <select id="episode_numbers" name="episode_numbers" multiple size="6">
-            {% for ep in episodes %}
-            <option value="{{ ep.episode_number }}">Episode {{ ep.episode_number }}</option>
-            {% endfor %}
-        </select>
-        <p style="font-size: 0.9em; margin-top: 6px;">
-        Hold <strong>Cmd</strong> (Mac) or <strong>Ctrl</strong> (Windows) to select multiple.
-        </p>
-
-
-      <br><br>
-
-      <label for="rating"><strong>Rating (1–5)</strong></label><br>
-      <input id="rating" name="rating" type="number" min="1" max="5" required>
-
-      <br><br>
-
-      <label for="review_text"><strong>Review</strong></label><br>
-      <textarea id="review_text" name="review_text" rows="4" cols="60" required></textarea>
-
-      <br><br>
-
-      <button type="submit">Submit Review</button>
-    </form>
-  {% else %}
-    <p><a href="{{ url_for('auth.login') }}">Sign in</a> to write a review.</p>
-  {% endif %}
-
-  </section>
-
-  <hr>
-
-  <section>
-    <h2>Reviews</h2>
-
-    <button id="toggleReviewForm">
-      {% if userReview %}
-        Edit Review
-      {% else %}
-        Add a Review
-      {% endif %}
-    </button>
-
-    <div
-      id="reviewForm"
-      style="display:none; margin-top: 1rem;"
-      data-has-review="{{ 'true' if userReview else 'false' }}"
-      data-review-id="{{ userReview.id if userReview else '' }}"
-    >
-      <label for="reviewRating">Rating:</label>
-      <select id="reviewRating">
+  <div class="review-form-container">
+    <h3>{% if userReview %}Edit Your Review{% else %}Write a Review{% endif %}</h3>
+    <form id="reviewForm" method="POST" action="{{ url_for('add_review', show_id=show.id) }}">
+      <label for="rating"><strong>Rating (1–5)</strong></label>
+      <select id="rating" name="rating" required>
         {% for i in range(1, 6) %}
-          <option
-            value="{{ i }}"
-            {% if userReview and userReview.rating == i %}selected{% endif %}
-          >
-            {{ i }}
-          </option>
+          <option value="{{ i }}" {% if userReview and userReview.rating == i %}selected{% endif %}>{{ i }}</option>
         {% endfor %}
       </select>
 
-      <br><br>
+      <label for="review_text"><strong>Review Text</strong></label>
+      <textarea id="review_text" name="review_text" rows="5" required>{{ userReview.review_text if userReview }}</textarea>
 
-      <label for="reviewText">Review:</label><br>
-      <textarea id="reviewText" rows="4" cols="50">{{ userReview.review_text if userReview }}</textarea>
-
-      <br><br>
-
-      <button id="submitReview">
-        {% if userReview %}
-          Update Review
-        {% else %}
-          Submit Review
-        {% endif %}
+      <button type="submit" class="btn btn-primary">
+        {% if userReview %}Update Review{% else %}Submit Review{% endif %}
       </button>
-    </div>
+    </form>
+  </div>
+  {% else %}
+  <p><a href="{{ url_for('auth.login') }}">Sign in</a> to write a review.</p>
+  {% endif %}
 
-    <hr>
+  <hr>
+<section class="panel reviews-section">
 
-    {% if reviews %}
+  <h2>Reviews</h2>
+
+  {% if reviews %}
+    <div class="reviews-list">
       {% for review, username, rating, text in reviews %}
-        <div class="review">
-          <p><strong>{{ username }}</strong> rated <strong>{{ rating }}/5</strong></p>
-          <p>{{ text }}</p>
-        </div>
-        <hr>
+      <article class="review-card">
+        <header>
+          <strong class="review-username">{{ username }}</strong>
+          <div class="review-rating" aria-label="Rating: {{ rating }} out of 5 stars">
+            {% for i in range(1, 6) %}
+              {% if i <= rating %}
+                <span class="star filled">★</span>
+              {% else %}
+                <span class="star">☆</span>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </header>
+        <p class="review-text">{{ text }}</p>
+      </article>
       {% endfor %}
-    {% else %}
-      <p>No reviews yet.</p>
-    {% endif %}
-  </section>
+    </div>
+  {% else %}
+    <p>No reviews yet.</p>
+  {% endif %}
 
-  <section>
-      <form method="POST" action="{{ url_for('set_status', show_id=show.id) }}">
-        <label><strong>Status</strong></label>
-        <select name="status">
-          <option value="planned">Plan to Watch</option>
-          <option value="watching">Watching</option>
-          <option value="completed">Completed</option>
-        </select>
-        <button type="submit">Save</button>
-      </form>
-  </section>
+</section>
 
+
+</section>
+
+</section>
+
+<section class="panel status-section" style="margin-top: 2rem;">
+  <form method="POST" action="{{ url_for('set_status', show_id=show.id) }}">
+    <label for="statusSelect"><strong>Watch Status</strong></label>
+    <select id="statusSelect" name="status" class="status-select">
+      <option value="planned" {% if current_status == "planned" %}selected{% endif %}>Plan to Watch</option>
+      <option value="watching" {% if current_status == "watching" %}selected{% endif %}>Watching</option>
+      <option value="completed" {% if current_status == "completed" %}selected{% endif %}>Completed</option>
+    </select>
+    <button type="submit" class="btn btn-primary status-btn">Save</button>
+  </form>
+</section>
 
 {% endblock %}
