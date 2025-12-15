@@ -3,8 +3,9 @@ from flask import Flask, render_template, jsonify, redirect, url_for, flash, req
 from flask_login import current_user, login_required
 from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
-from data_structure import db, login_manager, Show, Episode, User, Watched, Review
+from data_structure import db, login_manager, Show, Episode, User, Watched, Review, WatchStatus
 from routes import auth_bp
+from sqlalchemy import func
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -88,6 +89,30 @@ def createApp() :
       if episode_numbers:
         maxWatchedEpisode = max(episode_numbers)
 
+    avg_rating = (
+      db.session.query(func.avg(Review.rating))
+      .filter(Review.show_id == show.id)
+      .scalar()
+    )
+
+    user_review = None
+    if current_user.is_authenticated:
+        user_review = Review.query.filter_by(
+            user_id=current_user.id,
+            show_id=show.id
+        ).first()
+
+
+    rating_counts = (
+      db.session.query(Review.rating, func.count())
+      .filter(Review.show_id == show.id)
+      .group_by(Review.rating)
+      .all()
+    )
+
+    rating_map = {r: c for r, c in rating_counts}
+
+
     reviews = (
       Review.query
       .join(User, Review.user_id == User.id)
@@ -96,12 +121,16 @@ def createApp() :
       .all()
     )
 
+
     return render_template(
       "show.html",
       show=show,
       episodes=episodes,
       reviews=reviews,
-      maxWatchedEpisode=maxWatchedEpisode
+      maxWatchedEpisode=maxWatchedEpisode,
+      avg_rating=round(avg_rating, 2) if avg_rating else None,
+      rating_map=rating_map,
+      user_review=user_review
     )
   
   @app.route("/show/<int:show_id>/review", methods=["POST"])
@@ -253,9 +282,54 @@ def createApp() :
 
     db.session.commit()
     return "", 204
+  
+  @app.route("/status/<int:show_id>", methods=["POST"])
+  @login_required
+  def set_status(show_id):
+      status = request.form.get("status")
+  
+      ws = WatchStatus.query.filter_by(
+          user_id=current_user.id,
+          show_id=show_id
+      ).first()
+  
+      if ws:
+          ws.status = status
+      else:
+          ws = WatchStatus(
+              user_id=current_user.id,
+              show_id=show_id,
+              status=status
+          )
+          db.session.add(ws)
+  
+      db.session.commit()
+      flash("Status updated.", "success")
+      return redirect(url_for("show_detail", show_id=show_id))
+  @app.route("/user/<username>")
+  def user_profile(username):
+      user = User.query.filter_by(username=username).first_or_404()
+  
+      reviews = (
+        Review.query
+        .join(Show)
+        .filter(Review.user_id == user.id)
+        .add_columns(Show.title, Review.rating)
+        .all()
+      )
+  
+      return render_template("profile.html", user=user, reviews=reviews)
+  @app.route("/lists")
+  @login_required
+  def lists():
+      lists = List.query.filter_by(user_id=current_user.id).all()
+      return render_template("lists.html", lists=lists)
+
+
 
   return app
 
 app = createApp()
 if __name__ == "__main__":
   app.run(debug=True, port=5001)
+

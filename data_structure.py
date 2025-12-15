@@ -94,3 +94,26 @@ class Review(db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+class WatchStatus(db.Model):
+    __tablename__ = "watch_status"
+
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), primary_key=True)
+    show_id = db.Column(db.Integer, db.ForeignKey("shows.id"), primary_key=True)
+    status = db.Column(db.String(20), nullable=False)
+
+class List(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    title = db.Column(db.String(100))
+    is_public = db.Column(db.Boolean, default=True)
+
+class ListItem(db.Model):
+    list_id = db.Column(db.Integer, db.ForeignKey("list.id"), primary_key=True)
+    show_id = db.Column(db.Integer, db.ForeignKey("shows.id"), primary_key=True)
+    position = db.Column(db.Integer)
+
+__table_args__ = (
+    db.UniqueConstraint("user_id", "show_id", name="unique_user_review"),
+)
+

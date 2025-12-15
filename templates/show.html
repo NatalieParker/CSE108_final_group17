@@ -15,6 +15,25 @@
 
   <h1>{{ show.title }}</h1>
 
+  <section class="panel">
+    <h2>Community Rating</h2>
+  
+    {% if avg_rating %}
+      <p><strong>Average:</strong> {{ avg_rating }} / 5</p>
+  
+      <ul>
+        {% for star in range(5, 0, -1) %}
+          <li>
+            {{ star }}★ — {{ rating_map.get(star, 0) }} rating(s)
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No ratings yet.</p>
+    {% endif %}
+  </section>
+
+
   <section>
     <p><strong>Director:</strong> {{ show.director or "N/A" }}</p>
     <p><strong>Cast:</strong> {{ show.cast or "N/A" }}</p>
@@ -59,6 +78,8 @@
         <h2>Write a Review</h2>
 
   {% if current_user.is_authenticated %}
+  
+
     <form method="POST" action="{{ url_for('add_review', show_id=show.id) }}">
         <label for="episode_numbers"><strong>Select episode(s) (optional)</strong></label><br>
         <select id="episode_numbers" name="episode_numbers" multiple size="6">
@@ -111,5 +132,18 @@
       <p>No reviews yet.</p>
     {% endif %}
   </section>
+
+  <section>
+      <form method="POST" action="{{ url_for('set_status', show_id=show.id) }}">
+        <label><strong>Status</strong></label>
+        <select name="status">
+          <option value="planned">Plan to Watch</option>
+          <option value="watching">Watching</option>
+          <option value="completed">Completed</option>
+        </select>
+        <button type="submit">Save</button>
+      </form>
+  </section>
+
 
 {% endblock %}
