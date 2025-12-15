@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, jsonify, redirect, url_for, flash
+from flask import Flask, render_template, jsonify, redirect, url_for, flash, request
 from flask_login import current_user, login_required
 from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
@@ -190,6 +190,38 @@ def createApp() :
 
   with app.app_context():
     db.create_all()
+
+  @app.route("/watch", methods=["POST"])
+  @login_required
+  def mark_episode_watched():
+    data = request.get_json()
+    episode_id = data.get("episode_id")
+
+    episode = Episode.query.get(episode_id)
+    if not episode:
+      return "", 400
+
+    watched = (
+      Watched.query
+      .join(Episode, Watched.episode_id == Episode.id)
+      .filter(
+        Watched.user_id == current_user.id,
+        Episode.show_id == episode.show_id
+      )
+      .first()
+    )
+
+    if watched:
+      watched.episode_id = episode_id
+    else:
+      watched = Watched(
+        user_id=current_user.id,
+        episode_id=episode_id
+      )
+      db.session.add(watched)
+
+    db.session.commit()
+    return "", 204
 
   return app
 

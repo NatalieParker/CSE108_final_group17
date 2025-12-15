@@ -29,13 +29,19 @@
     <h2>Episodes</h2>
 
     {% if episodes %}
-      <ul>
+      <ul
+        id="episodeList"
+        data-show-id="{{ show.id }}"
+        data-max-watched="{{ maxWatchedEpisode or 0 }}"
+      >
         {% for ep in episodes %}
-          {% if maxWatchedEpisode and ep.episode_number <= maxWatchedEpisode %}
-            <li style="color: #999;">Episode {{ ep.episode_number }}</li>
-          {% else %}
-            <li>Episode {{ ep.episode_number }}</li>
-          {% endif %}
+          <li
+            class="episode-item"
+            data-episode-id="{{ ep.id }}"
+            data-episode-number="{{ ep.episode_number }}"
+          >
+            Episode {{ ep.episode_number }}
+          </li>
         {% endfor %}
       </ul>
     {% else %}
@@ -64,4 +70,5 @@
     {% endif %}
   </section>
 
+  <script src="{{ url_for('static', filename='show.js') }}"></script>
 {% endblock %}

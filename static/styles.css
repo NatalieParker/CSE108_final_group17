@@ -1,0 +1,7 @@
+.episode-item {
+  cursor: pointer;
+}
+
+.episode-item.watched {
+  color: #999;
+}

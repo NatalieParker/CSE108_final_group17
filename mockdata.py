@@ -84,12 +84,18 @@ def seed_database():
     watched_entries = 0
 
     for user in users:
-      watched_eps = random.sample(episodes, 15)
+      watched_shows = random.sample(shows, min(5, len(shows)))
 
-      for ep in watched_eps:
+      for show in watched_shows:
+        show_episodes = [ep for ep in episodes if ep.show_id == show.id]
+        if not show_episodes:
+          continue
+
+        max_episode = random.choice(show_episodes)
+
         watch = Watched(
           user_id=user.id,
-          episode_id=ep.id
+          episode_id=max_episode.id
         )
         db.session.add(watch)
         watched_entries += 1
