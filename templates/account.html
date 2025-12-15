@@ -10,6 +10,14 @@
   <section>
     <h2>Watch Log</h2>
 
+    <label for="watchedSearch">Search Title:</label>
+    <input
+      type="text"
+      id="watchedSearch"
+      placeholder="Search by title"
+      style="height: 1.5rem;"
+    >
+
     {% if watch_log %}
       <table class="show-table">
         <thead>
@@ -21,7 +29,7 @@
         </thead>
         <tbody>
           {% for entry in watch_log %}
-            <tr>
+            <tr data-title="{{ entry.show_title | lower }}">
               <td>
                 <img
                   src="{{ entry.cover or url_for('static', filename='covers/default.jpg') }}"
@@ -67,4 +75,5 @@
     </a>
   </section>
 
+  <script src="../static/account.js"></script>
 {% endblock %}
