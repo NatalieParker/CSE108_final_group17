@@ -43,4 +43,42 @@ function setupEpisodeClicks() {
   })
 }
 
+function setupReviewForm() {
+  const toggleBtn = document.getElementById("toggleReviewForm")
+  const form = document.getElementById("reviewForm")
+  const submitBtn = document.getElementById("submitReview")
+  const ratingInput = document.getElementById("reviewRating")
+  const textInput = document.getElementById("reviewText")
+  const episodeList = document.getElementById("episodeList")
+
+  if (!toggleBtn || !submitBtn || !episodeList) return
+
+  const showId = episodeList.dataset.showId
+  const hasReview = form.dataset.hasReview === "true"
+  const reviewId = form.dataset.reviewId
+
+  toggleBtn.addEventListener("click", () => {
+    form.style.display = form.style.display === "none" ? "block" : "none"
+  })
+
+  submitBtn.addEventListener("click", () => {
+    fetch("/save-review", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        show_id: showId,
+        review_id: reviewId,
+        rating: ratingInput.value,
+        text: textInput.value,
+        has_review: hasReview
+      })
+    }).then(() => {
+      location.reload()
+    })
+  })
+}
+
 setupEpisodeClicks()
+setupReviewForm()

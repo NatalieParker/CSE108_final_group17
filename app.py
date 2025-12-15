@@ -96,12 +96,19 @@ def createApp() :
       .all()
     )
 
+    userReview = (
+      Review.query
+      .filter_by(user_id=current_user.id, show_id=show.id)
+      .first()
+    )
+
     return render_template(
       "show.html",
       show=show,
       episodes=episodes,
       reviews=reviews,
-      maxWatchedEpisode=maxWatchedEpisode
+      maxWatchedEpisode=maxWatchedEpisode,
+      userReview=userReview
     )
 
 
@@ -219,6 +226,54 @@ def createApp() :
         episode_id=episode_id
       )
       db.session.add(watched)
+
+    db.session.commit()
+    return "", 204
+  
+  @app.route("/add-review", methods=["POST"])
+  @login_required
+  def add_review():
+    data = request.get_json()
+    show_id = data.get("show_id")
+    rating = data.get("rating")
+    text = data.get("text")
+
+    review = Review(
+      user_id=current_user.id,
+      show_id=show_id,
+      rating=rating,
+      review_text=text
+    )
+
+    db.session.add(review)
+    db.session.commit()
+
+    return "", 204
+  
+  @app.route("/save-review", methods=["POST"])
+  @login_required
+  def save_review():
+    data = request.get_json()
+
+    show_id = data.get("show_id")
+    rating = data.get("rating")
+    text = data.get("text")
+    has_review = data.get("has_review")
+    review_id = data.get("review_id")
+
+    if has_review:
+      review = Review.query.get(review_id)
+      if review and review.user_id == current_user.id:
+        review.rating = rating
+        review.review_text = text
+    else:
+      review = Review(
+        user_id=current_user.id,
+        show_id=show_id,
+        rating=rating,
+        review_text=text
+      )
+      db.session.add(review)
 
     db.session.commit()
     return "", 204
