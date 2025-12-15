@@ -117,13 +117,54 @@
   <section>
     <h2>Reviews</h2>
 
+    <button id="toggleReviewForm">
+      {% if userReview %}
+        Edit Review
+      {% else %}
+        Add a Review
+      {% endif %}
+    </button>
+
+    <div
+      id="reviewForm"
+      style="display:none; margin-top: 1rem;"
+      data-has-review="{{ 'true' if userReview else 'false' }}"
+      data-review-id="{{ userReview.id if userReview else '' }}"
+    >
+      <label for="reviewRating">Rating:</label>
+      <select id="reviewRating">
+        {% for i in range(1, 6) %}
+          <option
+            value="{{ i }}"
+            {% if userReview and userReview.rating == i %}selected{% endif %}
+          >
+            {{ i }}
+          </option>
+        {% endfor %}
+      </select>
+
+      <br><br>
+
+      <label for="reviewText">Review:</label><br>
+      <textarea id="reviewText" rows="4" cols="50">{{ userReview.review_text if userReview }}</textarea>
+
+      <br><br>
+
+      <button id="submitReview">
+        {% if userReview %}
+          Update Review
+        {% else %}
+          Submit Review
+        {% endif %}
+      </button>
+    </div>
+
+    <hr>
+
     {% if reviews %}
       {% for review, username, rating, text in reviews %}
         <div class="review">
-          <p>
-            <strong>{{ username }}</strong>
-            rated it <strong>{{ rating }}/5</strong>
-          </p>
+          <p><strong>{{ username }}</strong> rated <strong>{{ rating }}/5</strong></p>
           <p>{{ text }}</p>
         </div>
         <hr>

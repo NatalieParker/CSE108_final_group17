@@ -121,6 +121,11 @@ def createApp() :
       .all()
     )
 
+    userReview = (
+      Review.query
+      .filter_by(user_id=current_user.id, show_id=show.id)
+      .first()
+    )
 
     return render_template(
       "show.html",
@@ -130,7 +135,7 @@ def createApp() :
       maxWatchedEpisode=maxWatchedEpisode,
       avg_rating=round(avg_rating, 2) if avg_rating else None,
       rating_map=rating_map,
-      user_review=user_review
+      userReview=userReview
     )
   
   @app.route("/show/<int:show_id>/review", methods=["POST"])
@@ -324,8 +329,6 @@ def createApp() :
   def lists():
       lists = List.query.filter_by(user_id=current_user.id).all()
       return render_template("lists.html", lists=lists)
-
-
 
   return app
 
