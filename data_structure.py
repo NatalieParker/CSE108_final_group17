@@ -20,14 +20,19 @@ class User(db.Model, UserMixin):
     is_admin = db.Column(db.Boolean, default=False, nullable=False)
                          
     def set_password(self, password):
-        self.password = generate_password_hash(password)
+        self.password = generate_password_hash(
+            password,
+            method="pbkdf2:sha256"
+        )
+
     def check_password(self, password):
-        if self.password and not self.password.startswith(("pbkdf2:", "scrypt:", "argon2:")):
+        if self.password and not self.password.startswith(("pbkdf2:",)):
             if self.password == password:
                 self.set_password(password)
                 db.session.commit()
                 return True
             return False
+
         return check_password_hash(self.password, password)
     
     def __repr__(self):
