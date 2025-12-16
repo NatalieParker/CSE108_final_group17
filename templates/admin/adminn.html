@@ -1,0 +1,12 @@
+{% extends 'admin/master.html' %}
+
+{% block access_control %}
+  <ul class="nav navbar-nav navbar-right">
+    <li>
+      <a href="{{ url_for('index') }}">Back to Site</a>
+    </li>
+    <li>
+      <a href="{{ url_for('auth.logout') }}">Logout</a>
+    </li>
+  </ul>
+{% endblock %}

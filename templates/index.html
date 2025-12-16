@@ -6,16 +6,17 @@
 
   <div class="panel">
 
+    <div style="width: 40%;">
       <label for="titleSearch">Search Title:</label>
       <input
         type="text"
         id="titleSearch"
         placeholder="Search by title"
-        style="height: 1.5rem;"
+        style="height: 2.5rem; margin-bottom: 1rem;"
       >
 
-      <label for="genreDropdown" style="margin-left: 1rem;">Genre:</label>
-      <select id="genreDropdown">
+      <label for="genreDropdown">Genre:</label>
+      <select id="genreDropdown" style="margin-bottom: 1rem;">
         <option value="">All</option>
         <option value="international tv shows">International TV Shows</option>
         <option value="tv dramas">TV Dramas</option>
@@ -37,8 +38,8 @@
         <option value="science & nature tv">Science & Nature TV</option>
       </select>
 
-      <label for="ratingDropdown" style="margin-left: 1rem;">Rating:</label>
-      <select id="ratingDropdown" style="height: 1.5rem;">
+      <label for="ratingDropdown">Rating:</label>
+      <select id="ratingDropdown" style="height: 2.5rem;">
         <option value="">All</option>
         <option value="TV-MA">TV-MA</option>
         <option value="TV-14">TV-14</option>
@@ -47,6 +48,7 @@
         <option value="TV-Y">TV-Y</option>
         <option value="TV-G">TV-G</option>
       </select>
+    </div>
   </div>
   <div id="showGrid" class="grid">
     {% for show in shows %}

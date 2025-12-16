@@ -40,7 +40,10 @@ def createApp() :
   admin = Admin(
     app,
     name="Admin",
-    index_view=SecureAdminIndexView(url="/admin")
+    template_mode="bootstrap2",
+    index_view=AdminIndexView(
+      template="admin/adminn.html"
+    )
   )
 
   # Expose your models in the admin UI
@@ -130,6 +133,16 @@ def createApp() :
       .first()
     )
 
+    current_status = "planned"
+    if current_user.is_authenticated:
+      ws = WatchStatus.query.filter_by(
+        user_id=current_user.id,
+        show_id=show.id
+      ).first()
+
+      if ws and ws.status:
+        current_status = ws.status.strip().lower()
+
     return render_template(
       "show.html",
       show=show,
@@ -138,7 +151,8 @@ def createApp() :
       maxWatchedEpisode=maxWatchedEpisode,
       avg_rating=round(avg_rating, 2) if avg_rating else None,
       rating_map=rating_map,
-      userReview=userReview
+      userReview=userReview,
+      current_status=current_status
     )
   
   @app.route("/show/<int:show_id>/review", methods=["POST"])

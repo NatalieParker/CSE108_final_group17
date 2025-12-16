@@ -2,14 +2,13 @@
 {% block title %}CSE 108 Final: {{ show.title }}{% endblock %}
 {% block body %}
 
-<div class="hero"> 
-
-    <img
-      class="cover"
-      src="{{ show.cover or url_for('static', filename='covers/default.jpg') }}"
-      alt="{{ show.title }} cover"
-    >
-  </div>
+<div class="hero" style="margin-bottom: 2rem;"> 
+  <img
+    class="cover"
+    src="{{ show.cover or url_for('static', filename='covers/default.jpg') }}"
+    alt="{{ show.title }} cover"
+  >
+</div>
 
 <div class="panel">
 
@@ -45,6 +44,7 @@
     <p>{{ show.description or "No description available." }}</p>
   </section>
 </div>
+
 </div>
 
   <hr>
