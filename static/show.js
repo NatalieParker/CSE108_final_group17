@@ -37,6 +37,7 @@ function setupEpisodeClicks() {
     cb.addEventListener("change", async () => {
       const clickedNum = parseInt(item.dataset.episodeNumber, 10)
       const targetNum = cb.checked ? clickedNum : (clickedNum - 1)
+      console.log("clicked episode", item.dataset.episodeId, "num", item.dataset.episodeNumber);
 
       const newMax = Math.max(0, targetNum)
 

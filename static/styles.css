@@ -55,11 +55,24 @@ body{
   margin: 0;
   color: var(--text);
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  background: #070a14
+}
+
+body::before{
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 600px; /* controls how far accents extend */
+  pointer-events: none;
+  z-index: -1;
+
   background:
     radial-gradient(1200px 600px at 15% 0%, rgba(124,92,255,0.25), transparent 55%),
-    radial-gradient(1000px 500px at 85% 10%, rgba(45,226,167,0.18), transparent 55%),
-    linear-gradient(180deg, #070a14, var(--bg));
+    radial-gradient(1000px 500px at 85% 10%, rgba(45,226,167,0.18), transparent 55%);
 }
+
 
 a{ color: inherit; }
 a:hover{ color: white; }
@@ -205,6 +218,10 @@ input:focus, textarea:focus, select:focus{
   border-color: rgba(124,92,255,0.65);
   box-shadow: 0 0 0 4px rgba(124,92,255,0.15);
 }
+select option {
+  background-color: var(--bg);
+}
+
 
 .btn{
   display:inline-flex;

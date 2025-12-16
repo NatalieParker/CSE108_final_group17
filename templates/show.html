@@ -64,7 +64,10 @@
             data-episode-id="{{ ep.id }}"
             data-episode-number="{{ ep.episode_number }}"
           >
+          <label> 
+            <input type="checkbox" class="episode-checkbox">
             Episode {{ ep.episode_number }}
+          </label>
           </li>
         {% endfor %}
       </ul>
@@ -149,5 +152,8 @@
     <button type="submit" class="btn btn-primary status-btn">Save</button>
   </form>
 </section>
+
+
+<script src="{{ url_for('static', filename='show.js') }}"></script>
 
 {% endblock %}

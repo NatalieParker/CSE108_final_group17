@@ -64,6 +64,7 @@ class Episode(db.Model):
     return f"<Episode {self.episode_number}>"
   
 class Watched(db.Model):
+  __tablename__ = "watched"
   id = db.Column(db.Integer, primary_key=True)
   user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
   episode_id = db.Column(db.Integer, db.ForeignKey("episodes.id"), nullable=False)
@@ -103,17 +104,18 @@ class WatchStatus(db.Model):
     status = db.Column(db.String(20), nullable=False)
 
 class List(db.Model):
+    __tablename__ = "lists"
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     title = db.Column(db.String(100))
     is_public = db.Column(db.Boolean, default=True)
+    
+    items = db.relationship("ListItem", backref="list", cascade="all, delete-orphan")
 
 class ListItem(db.Model):
-    list_id = db.Column(db.Integer, db.ForeignKey("list.id"), primary_key=True)
+    __tablename__ = "list_items"
+    list_id = db.Column(db.Integer, db.ForeignKey("lists.id"), primary_key=True)
     show_id = db.Column(db.Integer, db.ForeignKey("shows.id"), primary_key=True)
     position = db.Column(db.Integer)
 
-__table_args__ = (
-    db.UniqueConstraint("user_id", "show_id", name="unique_user_review"),
-)
 
